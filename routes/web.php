@@ -4,31 +4,16 @@ use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
-use App\Models\User;
+use App\Http\Controllers\CourseController;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('prueba', function () {
-
-    /*
-    $user = User::create([
-        'name' => 'Juan',
-        'email' => 'juancito@davinci.edu.ar',
-        'password' => '1234'
-    ]);
-    */
-
-    $user = User::find(2);
-
-    $user->update([
-        'name' => 'Joan'
-    ]);
-
-    return $user;
-
-});
+Route::get('courses', [
+    CourseController::class,
+    'index'
+]);
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
