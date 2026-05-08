@@ -15,7 +15,7 @@ class CourseController extends Controller
     {
         $courses = Course::select( ['id', 'title', 'price'] )
             ->orderBy('title')
-            ->get();
+            ->paginate(15);
         return view('courses.index', [
             'title' => 'Acá van los cursos etc',
             'courses' => $courses
