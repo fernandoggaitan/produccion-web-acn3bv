@@ -10,10 +10,23 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+//Lista de cursos.
 Route::get('courses', [
     CourseController::class,
     'index'
-]);
+])->name('courses.index');
+
+//Formulario para agregar un curso nuevo.
+Route::get('/courses/create', [
+    CourseController::class,
+    'create'
+])->name('courses.create');
+
+//Acción para crear un curso nuevo.
+Route::post('courses', [
+    CourseController::class,
+    'store'
+])->name('courses.store');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])

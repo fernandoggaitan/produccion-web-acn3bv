@@ -1,8 +1,14 @@
-<x-layouts.app :title="__('Dashboard')">
+<x-layouts.app :title="__('Lista de cursos')">
 
     <h1 class="mb-3"> {{ $title }} </h1>
 
-    <x-enlace href=""> Agregar curso nuevo </x-enlace>
+    @if (session('status'))
+        <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+            {{ session('status') }}
+        </div>
+    @endif
+
+    <x-botones.enlace href="{{ route('courses.create') }}"> Agregar curso nuevo </x-botones.enlace>
 
     <div class="relative overflow-x-auto mt-5">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -29,10 +35,10 @@
                             {{ $c->price }}
                         </td>
                         <td class="px-6 py-4">
-                            <x-enlace> Ver </x-enlace>
+                            <x-botones.enlace> Ver </x-botones.enlace>
                         </td>
                         <td class="px-6 py-4">
-                            <x-enlace> Editar </x-enlace>
+                            <x-botones.enlace> Editar </x-botones.enlace>
                         </td>
                     </tr>
                 @endforeach            

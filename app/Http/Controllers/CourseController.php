@@ -14,7 +14,7 @@ class CourseController extends Controller
     public function index()
     {
         $courses = Course::select( ['id', 'title', 'price'] )
-            ->orderBy('title')
+            ->orderBy('id', 'desc')
             ->paginate(15);
         return view('courses.index', [
             'title' => 'Acá van los cursos etc',
@@ -27,7 +27,7 @@ class CourseController extends Controller
      */
     public function create()
     {
-        //
+        return view('courses.create');
     }
 
     /**
@@ -35,7 +35,25 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        //Validar la información.
+        $request->validate([
+            'title' => ['required', 'max:100'],
+            'description' => ['required'],
+            'price' => ['numeric', 'max:1000000']
+        ]);
+        
+        //Creamos curso nuevo
+        $course = Course::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'price' => $request->price
+        ]);
+
+        return redirect()
+            ->route('courses.index')
+            ->with('status', 'El curso se creó correctamente.');
+
     }
 
     /**
