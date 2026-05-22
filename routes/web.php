@@ -28,6 +28,30 @@ Route::post('courses', [
     'store'
 ])->name('courses.store');
 
+//Acción para ver un curso por su identificación.
+Route::get('courses/{course}', [
+    CourseController::class,
+    'show'
+])->name('courses.show');
+
+//Formulario para editar un curso existente.
+Route::get('/courses/{course}/edit', [
+    CourseController::class,
+    'edit'
+])->name('courses.edit');
+
+//Acción para modificar un curso existente.
+Route::put('/courses/{course}', [
+    CourseController::class,
+    'update'
+])->name('courses.update');
+
+//Acción para eliminar un curso existente.
+Route::delete('/courses/{course}', [
+    CourseController::class,
+    'destroy'
+])->name('courses.destroy');
+
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');

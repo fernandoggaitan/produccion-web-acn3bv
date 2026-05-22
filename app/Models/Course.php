@@ -13,7 +13,8 @@ class Course extends Model
     protected $fillable = [
         'title',
         'description',
-        'price'
+        'price',
+        'visible'
     ];
 
 }

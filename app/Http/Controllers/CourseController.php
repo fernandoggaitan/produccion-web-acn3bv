@@ -5,20 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 
 class CourseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+
+        $search = $request->search;
+
         $courses = Course::select( ['id', 'title', 'price'] )
+            ->where('visible', true)
+            ->when($search, fn(Builder $query) =>
+                $query
+                    ->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+
+            )
             ->orderBy('id', 'desc')
             ->paginate(15);
         return view('courses.index', [
             'title' => 'Acá van los cursos etc',
-            'courses' => $courses
+            'courses' => $courses,
+            'search' => $search
         ]);
     }
 
@@ -61,7 +73,13 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        //
+
+        //$course = Course::findOrFail($id);
+
+        return view('courses.show', [
+            'course' => $course
+        ]);
+
     }
 
     /**
@@ -69,7 +87,9 @@ class CourseController extends Controller
      */
     public function edit(Course $course)
     {
-        //
+        return view('courses.edit', [
+            'course' => $course
+        ]);
     }
 
     /**
@@ -77,7 +97,24 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
-        //
+        
+        //Validar la información.
+        $request->validate([
+            'title' => ['required', 'max:100'],
+            'description' => ['required'],
+            'price' => ['numeric', 'max:1000000']
+        ]);
+
+        $course->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'price' => $request->price
+        ]);
+
+        return redirect()
+            ->route('courses.index')
+            ->with('status', 'El curso se modificó correctamente.');
+
     }
 
     /**
@@ -85,6 +122,16 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-        //
+        
+        //$course->delete();
+
+        $course->update([
+            'visible' => false
+        ]);
+
+        return redirect()
+            ->route('courses.index')
+            ->with('status', 'El curso se eliminó correctamente.');
+
     }
 }
