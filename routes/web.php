@@ -5,11 +5,21 @@ use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CommentController;
+use App\Http\Middleware\IsAdmin;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::resource('/courses', CourseController::class)
+    ->middleware([
+        'auth', 
+        'verified',
+        IsAdmin::class
+    ]);
+
+/*
 //Lista de cursos.
 Route::get('courses', [
     CourseController::class,
@@ -51,6 +61,12 @@ Route::delete('/courses/{course}', [
     CourseController::class,
     'destroy'
 ])->name('courses.destroy');
+*/
+
+Route::get('/comments', [
+    CommentController::class,
+    'index'
+])->name('comments.index');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
