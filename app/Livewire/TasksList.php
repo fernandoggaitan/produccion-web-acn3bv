@@ -5,13 +5,20 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Task;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\On;
 
 class TasksList extends Component
 {
 
     public string $title = '';
     public string $search = '';
-    public int $renderizados = 0;
+    public string $msj = '';
+
+    #[On('task-deleted')]
+    public function taskDeleted(string $msj)
+    {
+        $this->msj = $msj;
+    }
 
     public function add():void
     {
@@ -21,21 +28,8 @@ class TasksList extends Component
         $this->title = '';
     }
 
-    public function change(Task $task):void
-    {
-
-        //Toggle.
-        $completed = !$task->completed;
-
-        $task->update([
-            'completed' => $completed
-        ]);
-
-    }
-
     public function render()
     {
-        $this->renderizados++;
         $tasks = Task::select( ['id', 'title', 'completed'] )
             ->when($this->search, fn(Builder $query) =>
                 $query->where('title', 'like', "%{$this->search}%")
