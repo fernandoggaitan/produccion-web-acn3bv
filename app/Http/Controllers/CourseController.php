@@ -17,7 +17,7 @@ class CourseController extends Controller
 
         $search = $request->search;
 
-        $courses = Course::select( ['id', 'title', 'price'] )
+        $courses = Course::select( ['id', 'title', 'price', 'image'] )
             ->where('visible', true)
             ->when($search, fn(Builder $query) =>
                 $query
@@ -52,14 +52,26 @@ class CourseController extends Controller
         $request->validate([
             'title' => ['required', 'max:100'],
             'description' => ['required'],
-            'price' => ['numeric', 'max:1000000']
+            'price' => ['numeric', 'max:1000000'],
+            'image' => ['nullable', 'mimes:jpg,jpeg,png']
         ]);
+
+        $image = null;
+
+        //Verificamos si el usuario está intentando guardar un archivo.
+        if( $request->hasFile('image') ){
+            //Timestamp + Nombre del archivo.
+            $image_name = time() . $request->file('image')->getClientOriginalName();
+            //Subida de archivo.
+            $image = $request->file('image')->storeAs('courses', $image_name, 'public');
+        }
         
         //Creamos curso nuevo
         $course = Course::create([
             'title' => $request->title,
             'description' => $request->description,
-            'price' => $request->price
+            'price' => $request->price,
+            'image' => $image
         ]);
 
         return redirect()
@@ -102,13 +114,25 @@ class CourseController extends Controller
         $request->validate([
             'title' => ['required', 'max:100'],
             'description' => ['required'],
-            'price' => ['numeric', 'max:1000000']
+            'price' => ['numeric', 'max:1000000'],
+            'image' => ['nullable', 'mimes:jpg,jpeg,png']
         ]);
+
+        $image = $course->image;
+
+        //Verificamos si el usuario está intentando guardar un archivo.
+        if( $request->hasFile('image') ){
+            //Timestamp + Nombre del archivo.
+            $image_name = time() . $request->file('image')->getClientOriginalName();
+            //Subida de archivo.
+            $image = $request->file('image')->storeAs('courses', $image_name, 'public');
+        }
 
         $course->update([
             'title' => $request->title,
             'description' => $request->description,
-            'price' => $request->price
+            'price' => $request->price,
+            'image' => $image
         ]);
 
         return redirect()
